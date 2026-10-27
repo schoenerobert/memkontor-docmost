@@ -1,26 +1,36 @@
-# Docmost mit Memkontor-Erscheinungsbild. Geändert wird nur die fertige Oberfläche: Name (Titel, Kopfzeile,
-# Login-Seite, Texte), Icons, Akzentfarbe Teal statt Blau, Deutsch auch vor dem Login (die englische Textdatei bekommt die deutschen Texte, Docmost lädt vor der Anmeldung immer Englisch) und ein Link auf den Quellcode (AGPL-3.0 verlangt, dass Nutzer übers Netz an den
-# Quellcode der geänderten Fassung kommen). Der Menüpunkt 'Lizenz & Edition' (Werbung für Docmost Enterprise) ist
-# ausgeblendet. Danach bekommen alle Oberflächen-Dateien neue Namen (umbenennen.js), sonst liefern Cloudflare und
-# Browser die alten aus, weil Docmost sie als unveränderlich markiert. Server, Datenbank und Lizenzhinweise bleiben unverändert.
-# Der Name Docmost bleibt dort, wo er technisch ist (JWT-Aussteller, Mails, Kleinbuchstaben wie docmost.com).
+# Docmost mit Memkontor-Erscheinungsbild. Geändert wird nur der Kern von Docmost (AGPL-3.0), nie Dateien aus den
+# ee-Verzeichnissen: die stehen unter der Docmost Enterprise License, deren Änderungen nur mit Abo genutzt werden dürfen.
+#
+# Kern-Änderungen, alle in der fertigen Oberfläche:
+#   - der Name als eigener Text (`Docmost`) in Kopfzeile, Login-Seite, Titel (app-header, auth-layout, config,
+#     home-ai-prompt, public-space-directory-page), nicht in Übersetzungsschlüsseln
+#   - Übersetzungen: nur die angezeigten Texte (branding/texte.js), Deutsch auch vor dem Login (Docmost lädt vor der
+#     Anmeldung immer die englische Datei, sie bekommt die deutschen Texte)
+#   - Icons, Akzentfarbe Teal, Menüpunkt "Lizenz & Edition" ausgeblendet (settings-sidebar)
+#   - Link auf den Quellcode, wie AGPL-3.0 § 13 verlangt
+# Die Enterprise-Seiten (ai-chat, ai-settings, user-api-keys) bleiben Byte für Byte, wie Docmost sie ausliefert; der
+# Bau bricht ab, wenn sich dort etwas ändert. Server, Datenbank und Lizenzhinweise bleiben unverändert.
+# Zwischenspeicher: siehe Caddyfile, nicht hier.
 FROM docmost/docmost:0.96.0@sha256:b56947fcfd08aab8fae12a377e1792784786adbf8b96e4281f14ef4fc072685a
 ARG QUELLCODE_URL=https://github.com/schoenerobert/memkontor-docmost
 USER root
 COPY branding/icons/ /app/apps/client/dist/icons/
-COPY branding/umbenennen.js /tmp/umbenennen.js
+COPY branding/texte.js /tmp/texte.js
 RUN cd /app/apps/client/dist \
- && find . -type f \( -name '*.js' -o -name '*.json' -o -name '*.html' \) -exec sed -i 's/Docmost/Memkontor/g' {} + \
+ && ee='assets/(ai-chat|ai-settings|user-api-keys)-[^/]*\.js$' \
+ && ee_vorher=$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum) \
+ && find assets -name '*.js' | grep -v -E "$ee" | xargs sed -i 's/`Docmost`/`Memkontor`/g' \
+ && sed -i 's/Docmost/Memkontor/g' index.html manifest.json \
  && sed -i 's/"#222"/"#0C0C0C"/g' manifest.json \
- && link="<a href=\"${QUELLCODE_URL}\" target=\"_blank\" rel=\"noopener\" style=\"position:fixed;right:8px;bottom:4px;font:11px sans-serif;color:rgb(138,138,138);text-decoration:none;z-index:1\">Quellcode (AGPL)</a>" \
- && sed -i "s|</body>|${link}</body>|" index.html \
- && cp locales/de-DE/translation.json locales/en-US/translation.json \
  && sed -i 's|path:`/settings/license`}|path:`/settings/license`,env:`cloud`}|' assets/index-*.js \
  && grep -q 'path:`/settings/license`,env:`cloud`}' assets/index-*.js \
+ && node /tmp/texte.js locales && rm /tmp/texte.js \
+ && cp locales/de-DE/translation.json locales/en-US/translation.json \
+ && link="<a href=\"${QUELLCODE_URL}\" target=\"_blank\" rel=\"noopener\" style=\"position:fixed;right:8px;bottom:4px;font:11px sans-serif;color:rgb(138,138,138);text-decoration:none;z-index:1\">Quellcode (AGPL)</a>" \
+ && sed -i "s|</body>|${link}</body>|" index.html \
  && farbe="<style>:root{--mantine-primary-color-filled:#0C9A8A!important;--mantine-primary-color-filled-hover:#0A8578!important;--mantine-primary-color-light:rgba(12,154,138,.1)!important;--mantine-primary-color-light-hover:rgba(12,154,138,.16)!important;--mantine-primary-color-light-color:#0C9A8A!important;--mantine-color-anchor:#0C9A8A!important}</style>" \
  && sed -i "s|</head>|${farbe}</head>|" index.html \
- && test -z "$(find . -type f \( -name '*.js' -o -name '*.json' -o -name '*.html' \) -exec grep -l Docmost {} +)" \
- && node /tmp/umbenennen.js /app/apps/client/dist \
- && rm /tmp/umbenennen.js \
+ && test -n "$ee_vorher" \
+ && test "$ee_vorher" = "$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum)" \
  && chown -R node:node /app/apps/client/dist
 USER node

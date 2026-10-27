@@ -3,19 +3,22 @@
 Dieses Repository enthält den Quellcode der geänderten Docmost-Fassung, die Memkontor betreibt. Memkontor nutzt
 [Docmost](https://github.com/docmost/docmost) 0.96.0 (AGPL-3.0) unverändert und passt nur die fertige Oberfläche an.
 
-## Was geändert ist
+## Was geändert ist (Stand 27.10.2026)
 
-- Name: "Docmost" heißt in der Oberfläche "Memkontor" (Titel, Kopfzeile, Login-Seite, Texte).
+Geändert ist nur der Kern von Docmost (AGPL-3.0), und nur die fertige Oberfläche:
+
+- Name: wo die Oberfläche "Docmost" als eigenen Text zeigt (Kopfzeile, Login-Seite, Titel), steht "Memkontor".
+- Texte: in den Übersetzungsdateien nur die angezeigten Texte, nie die Schlüssel (`branding/texte.js`). Hinweise auf
+  die Docmost-Bezahlversion werden zu "In dieser Fassung nicht enthalten." Deutsch gilt auch vor der Anmeldung.
 - Icons: eigene Icons (`branding/icons/`, erzeugt mit `branding/icons_erzeugen.py`).
 - Farbe: Akzentfarbe Teal statt Blau.
-- Sprache: deutsche Texte auch vor der Anmeldung.
 - Menü: der Eintrag "Lizenz & Edition" ist ausgeblendet.
-- Dateinamen: alle Oberflächen-Dateien bekommen je Build einen neuen Namen (`branding/umbenennen.js`), damit
-  Browser und Zwischenspeicher die geänderte Fassung laden.
 - Ein Link "Quellcode (AGPL)" unten rechts führt hierher.
 
-Server, Datenbank und alle Lizenzhinweise von Docmost bleiben unverändert. Den Enterprise-Teil von Docmost
-(eigene Lizenz) nutzt Memkontor nicht.
+Nicht geändert: Dateien aus den Enterprise-Verzeichnissen von Docmost (`apps/client/src/ee`, `apps/server/src/ee`,
+`packages/ee`). Sie stehen unter der Docmost Enterprise License. Der Bau prüft, dass die daraus gebauten Dateien Byte
+für Byte unverändert bleiben, und bricht sonst ab. Memkontor nutzt keine Enterprise-Funktion. Server, Datenbank und
+alle Lizenzhinweise von Docmost bleiben unverändert.
 
 ## Bauen
 
