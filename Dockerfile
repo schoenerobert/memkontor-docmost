@@ -8,6 +8,7 @@
 #     Anmeldung immer die englische Datei, sie bekommt die deutschen Texte)
 #   - Icons, Akzentfarbe Teal, Menüpunkt "Lizenz & Edition" ausgeblendet (settings-sidebar)
 #   - Link auf den Quellcode, wie AGPL-3.0 § 13 verlangt
+#   - Mails (Einladung, Passwort) auf Deutsch und mit Memkontor-Absender (branding/mails.sh, Server-Kern)
 # Die Enterprise-Seiten (ai-chat, ai-settings, user-api-keys) bleiben Byte für Byte, wie Docmost sie ausliefert; der
 # Bau bricht ab, wenn sich dort etwas ändert. Server, Datenbank und Lizenzhinweise bleiben unverändert.
 # Zwischenspeicher: siehe Caddyfile, nicht hier.
@@ -16,6 +17,7 @@ ARG QUELLCODE_URL=https://github.com/schoenerobert/memkontor-docmost
 USER root
 COPY branding/icons/ /app/apps/client/dist/icons/
 COPY branding/texte.js /tmp/texte.js
+COPY branding/mails.sh /tmp/mails.sh
 RUN cd /app/apps/client/dist \
  && ee='assets/(ai-chat|ai-settings|user-api-keys)-[^/]*\.js$' \
  && ee_vorher=$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum) \
@@ -33,4 +35,5 @@ RUN cd /app/apps/client/dist \
  && test -n "$ee_vorher" \
  && test "$ee_vorher" = "$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum)" \
  && chown -R node:node /app/apps/client/dist
+RUN sh /tmp/mails.sh /app/apps/server/dist && rm /tmp/mails.sh
 USER node

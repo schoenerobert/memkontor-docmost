@@ -3,7 +3,7 @@
 Dieses Repository enthält den Quellcode der geänderten Docmost-Fassung, die Memkontor betreibt. Memkontor nutzt
 [Docmost](https://github.com/docmost/docmost) 0.96.0 (AGPL-3.0) unverändert und passt nur die fertige Oberfläche an.
 
-## Was geändert ist (Stand 27.10.2026)
+## Was geändert ist (Stand 27.10.2026, Mails ergänzt am selben Tag)
 
 Geändert ist nur der Kern von Docmost (AGPL-3.0), und nur die fertige Oberfläche:
 
@@ -13,6 +13,8 @@ Geändert ist nur der Kern von Docmost (AGPL-3.0), und nur die fertige Oberfläc
 - Icons: eigene Icons (`branding/icons/`, erzeugt mit `branding/icons_erzeugen.py`).
 - Farbe: Akzentfarbe Teal statt Blau.
 - Menü: der Eintrag "Lizenz & Edition" ist ausgeblendet.
+- Mails: Einladung, Einladung angenommen, Passwort vergessen und Passwort geändert auf Deutsch, mit Memkontor statt
+  Docmost, samt Betreffzeilen (`branding/mails.sh`, Server-Kern).
 - Ein Link "Quellcode (AGPL)" unten rechts führt hierher.
 
 Nicht geändert: Dateien aus den Enterprise-Verzeichnissen von Docmost (`apps/client/src/ee`, `apps/server/src/ee`,
