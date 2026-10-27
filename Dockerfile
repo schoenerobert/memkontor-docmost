@@ -7,7 +7,8 @@
 #   - Übersetzungen: nur die angezeigten Texte (branding/texte.js), Deutsch auch vor dem Login (Docmost lädt vor der
 #     Anmeldung immer die englische Datei, sie bekommt die deutschen Texte)
 #   - Icons, Farben nur Schwarz, Weiß und Teal (branding/farben.css), Menüpunkt "Lizenz & Edition" ausgeblendet
-#     (settings-sidebar)
+#     (settings-sidebar), dort "API keys" (Bezahlversion) ersetzt durch "KI-Zugang", eine Seite des MCP (/schluessel);
+#     ein kleines Skript lädt sie als eigene Seite statt über den Router der Oberfläche
 #   - Link auf den Quellcode, wie AGPL-3.0 § 13 verlangt
 #   - Mails (Einladung, Passwort, Hinweise) auf Deutsch und mit Memkontor-Absender (branding/mails.sh, Server-Kern)
 # Die Enterprise-Seiten (ai-chat, ai-settings, user-api-keys) bleiben Byte für Byte, wie Docmost sie ausliefert; der
@@ -28,10 +29,14 @@ RUN cd /app/apps/client/dist \
  && sed -i 's/"#222"/"#0C0C0C"/g' manifest.json \
  && sed -i 's|path:`/settings/license`}|path:`/settings/license`,env:`cloud`}|' assets/index-*.js \
  && grep -q 'path:`/settings/license`,env:`cloud`}' assets/index-*.js \
+ && sed -i 's|{label:`API keys`,icon:\([A-Za-z_$]*\),path:`/settings/account/api-keys`,feature:[A-Za-z_$.]*}|{label:`KI-Zugang`,icon:\1,path:`/schluessel`}|' assets/index-*.js \
+ && grep -q 'label:`KI-Zugang`' assets/index-*.js \
  && node /tmp/texte.js locales && rm /tmp/texte.js \
  && cp locales/de-DE/translation.json locales/en-US/translation.json \
  && link="<a href=\"${QUELLCODE_URL}\" target=\"_blank\" rel=\"noopener\" style=\"position:fixed;right:8px;bottom:4px;font:11px sans-serif;color:rgb(138,138,138);text-decoration:none;z-index:1\">Quellcode (AGPL)</a>" \
  && sed -i "s|</body>|${link}</body>|" index.html \
+ && seiten="<script>document.addEventListener('click',function(e){var a=e.target.closest?e.target.closest('a[href=\"/schluessel\"]'):null;if(a){e.preventDefault();e.stopPropagation();location.href='/schluessel'}},true)</script>" \
+ && sed -i "s|</body>|${seiten}</body>|" index.html \
  && farbe="<style>$(tail -1 /tmp/farben.css)</style>" \
  && sed -i "s|</head>|${farbe}</head>|" index.html && rm /tmp/farben.css \
  && grep -q "mantine-color-red-filled:#0C0C0C" index.html \

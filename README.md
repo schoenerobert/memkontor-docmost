@@ -15,7 +15,9 @@ Geändert ist nur der Kern von Docmost (AGPL-3.0), und nur die fertige Oberfläc
 - Icons: eigene Icons (`branding/icons/`, erzeugt mit `branding/icons_erzeugen.py`).
 - Farben: nur Schwarz, Weiß und Teal (`branding/farben.css`). Alle bunten Farbpaletten der Oberfläche werden Teal,
   Rot wird Schwarz.
-- Menü: der Eintrag "Lizenz & Edition" ist ausgeblendet.
+- Menü: der Eintrag "Lizenz & Edition" ist ausgeblendet. Der Eintrag "API keys" (Bezahlversion) zeigt stattdessen auf
+  "KI-Zugang", eine eigene Seite von Memkontor außerhalb von Docmost (`/schluessel`); ein kleines Skript in `index.html`
+  lädt sie als eigene Seite.
 - Mails: Einladung, Einladung angenommen, Passwort vergessen, Passwort geändert sowie die Hinweise zu Kommentaren,
   Erwähnungen, Seitenänderungen, Freigaben und die Übersicht auf Deutsch, mit Memkontor statt Docmost, samt
   Betreffzeilen (`branding/mails.sh`, Server-Kern).
