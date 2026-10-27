@@ -1,0 +1,18 @@
+# Vor Docmost, damit Browser und Cloudflare eine neue Oberfläche nach höchstens fünf Minuten laden.
+# Docmost markiert assets/ als "immutable" (ein Jahr). Das stimmt nur, solange niemand die Dateien ändert; wir ändern
+# sie beim Bau (Name, Texte), behalten aber Docmosts Dateinamen, damit keine Enterprise-Datei angefasst wird.
+{
+	admin off
+	auto_https off
+}
+
+:8080 {
+	handle /assets/* {
+		reverse_proxy docmost:3000 {
+			header_down Cache-Control "public, max-age=300, must-revalidate"
+		}
+	}
+	handle {
+		reverse_proxy docmost:3000
+	}
+}

@@ -20,7 +20,12 @@ Nicht geändert: Dateien aus den Enterprise-Verzeichnissen von Docmost (`apps/cl
 für Byte unverändert bleiben, und bricht sonst ab. Memkontor nutzt keine Enterprise-Funktion. Server, Datenbank und
 alle Lizenzhinweise von Docmost bleiben unverändert.
 
-## Bauen
+## Bauen und starten
+
+`compose.beispiel.yml` startet diese Fassung mit Postgres, Redis und Caddy (`Caddyfile`: kurze Zwischenspeicher-Zeiten,
+weil die Oberfläche beim Bau geändert wird). Jeder Dienst läuft in einem eigenen Container, Datenbank und Redis nur in
+einem internen Netz.
+
 
 ```bash
 docker build -t memkontor-docmost .

@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["pillow>=10"]
 # ///
-"""Memkontor-Icons in der XLR8N-CI: schwarzer Grund, weißes M aus geraden Strichen, Teal-Balken darunter.
+"""Memkontor-Icons: schwarzer Grund, weißes M aus geraden Strichen, Teal-Balken darunter.
 Keine Schrift nötig, das M ist ein Polygon. Erzeugt die Dateien, die Docmost unter /icons erwartet.
 
 Aufruf: uv run --script icons_erzeugen.py   (schreibt nach ./icons)

@@ -1,0 +1,61 @@
+# Beispiel: diese Docmost-Fassung mit Datenbank, Redis und Caddy starten. Werte kommen aus der Umgebung, nie aus
+# dieser Datei:
+#   APP_URL=https://wiki.example.com APP_SECRET=$(openssl rand -hex 32) PG_PASS=$(openssl rand -hex 24) \
+#   docker compose -f compose.beispiel.yml up -d --build
+# Caddy lauscht auf Port 8080 im Netz "kante". Wie die Adresse nach außen kommt (Reverse Proxy, Tunnel, TLS), ist
+# Sache des Betreibers und nicht Teil dieses Beispiels.
+
+services:
+  docmost:
+    build: .
+    environment:
+      APP_URL: ${APP_URL:?}
+      APP_SECRET: ${APP_SECRET:?}
+      DATABASE_URL: postgresql://docmost:${PG_PASS:?}@db:5432/docmost?schema=public
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - docmost-data:/app/data/storage
+    depends_on: [db, redis]
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    networks: [daten, app]
+
+  db:
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${PG_PASS:?}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    networks: [daten]
+
+  redis:
+    image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    networks: [daten]
+
+  web:
+    image: caddy:2.8.4-alpine@sha256:af32e97399febea808609119bb21544d0265c58a02836576e32a2d082c262c17
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on: [docmost]
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    networks: [app, kante]
+
+networks:
+  daten: {internal: true}
+  app: {internal: true}
+  kante: {}
+
+volumes:
+  docmost-data:
+  db-data:
+  redis-data:
