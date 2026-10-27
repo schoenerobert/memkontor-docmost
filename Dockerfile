@@ -6,9 +6,10 @@
 #     home-ai-prompt, public-space-directory-page), nicht in Übersetzungsschlüsseln
 #   - Übersetzungen: nur die angezeigten Texte (branding/texte.js), Deutsch auch vor dem Login (Docmost lädt vor der
 #     Anmeldung immer die englische Datei, sie bekommt die deutschen Texte)
-#   - Icons, Akzentfarbe Teal, Menüpunkt "Lizenz & Edition" ausgeblendet (settings-sidebar)
+#   - Icons, Farben nur Schwarz, Weiß und Teal (branding/farben.css), Menüpunkt "Lizenz & Edition" ausgeblendet
+#     (settings-sidebar)
 #   - Link auf den Quellcode, wie AGPL-3.0 § 13 verlangt
-#   - Mails (Einladung, Passwort) auf Deutsch und mit Memkontor-Absender (branding/mails.sh, Server-Kern)
+#   - Mails (Einladung, Passwort, Hinweise) auf Deutsch und mit Memkontor-Absender (branding/mails.sh, Server-Kern)
 # Die Enterprise-Seiten (ai-chat, ai-settings, user-api-keys) bleiben Byte für Byte, wie Docmost sie ausliefert; der
 # Bau bricht ab, wenn sich dort etwas ändert. Server, Datenbank und Lizenzhinweise bleiben unverändert.
 # Zwischenspeicher: siehe Caddyfile, nicht hier.
@@ -18,6 +19,7 @@ USER root
 COPY branding/icons/ /app/apps/client/dist/icons/
 COPY branding/texte.js /tmp/texte.js
 COPY branding/mails.sh /tmp/mails.sh
+COPY branding/farben.css /tmp/farben.css
 RUN cd /app/apps/client/dist \
  && ee='assets/(ai-chat|ai-settings|user-api-keys)-[^/]*\.js$' \
  && ee_vorher=$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum) \
@@ -30,8 +32,9 @@ RUN cd /app/apps/client/dist \
  && cp locales/de-DE/translation.json locales/en-US/translation.json \
  && link="<a href=\"${QUELLCODE_URL}\" target=\"_blank\" rel=\"noopener\" style=\"position:fixed;right:8px;bottom:4px;font:11px sans-serif;color:rgb(138,138,138);text-decoration:none;z-index:1\">Quellcode (AGPL)</a>" \
  && sed -i "s|</body>|${link}</body>|" index.html \
- && farbe="<style>:root{--mantine-primary-color-filled:#0C9A8A!important;--mantine-primary-color-filled-hover:#0A8578!important;--mantine-primary-color-light:rgba(12,154,138,.1)!important;--mantine-primary-color-light-hover:rgba(12,154,138,.16)!important;--mantine-primary-color-light-color:#0C9A8A!important;--mantine-color-anchor:#0C9A8A!important}</style>" \
- && sed -i "s|</head>|${farbe}</head>|" index.html \
+ && farbe="<style>$(tail -1 /tmp/farben.css)</style>" \
+ && sed -i "s|</head>|${farbe}</head>|" index.html && rm /tmp/farben.css \
+ && grep -q "mantine-color-red-filled:#0C0C0C" index.html \
  && test -n "$ee_vorher" \
  && test "$ee_vorher" = "$(find assets -type f | grep -E "$ee" | sort | xargs sha256sum)" \
  && chown -R node:node /app/apps/client/dist

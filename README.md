@@ -3,18 +3,22 @@
 Dieses Repository enthält den Quellcode der geänderten Docmost-Fassung, die Memkontor betreibt. Memkontor nutzt
 [Docmost](https://github.com/docmost/docmost) 0.96.0 (AGPL-3.0) unverändert und passt nur die fertige Oberfläche an.
 
-## Was geändert ist (Stand 27.10.2026, Mails ergänzt am selben Tag)
+## Was geändert ist (Stand 27.10.2026, zuletzt ergänzt am selben Abend: Farben, Texte, Hinweis-Mails)
 
 Geändert ist nur der Kern von Docmost (AGPL-3.0), und nur die fertige Oberfläche:
 
 - Name: wo die Oberfläche "Docmost" als eigenen Text zeigt (Kopfzeile, Login-Seite, Titel), steht "Memkontor".
 - Texte: in den Übersetzungsdateien nur die angezeigten Texte, nie die Schlüssel (`branding/texte.js`). Hinweise auf
   die Docmost-Bezahlversion werden zu "In dieser Fassung nicht enthalten." Deutsch gilt auch vor der Anmeldung.
+  Ergänzt sind deutsche Texte, die in Docmost fehlen (z. B. "Von mir erstellt"), und Anführungszeichen um einzelne
+  deutsche Texte sind entfernt.
 - Icons: eigene Icons (`branding/icons/`, erzeugt mit `branding/icons_erzeugen.py`).
-- Farbe: Akzentfarbe Teal statt Blau.
+- Farben: nur Schwarz, Weiß und Teal (`branding/farben.css`). Alle bunten Farbpaletten der Oberfläche werden Teal,
+  Rot wird Schwarz.
 - Menü: der Eintrag "Lizenz & Edition" ist ausgeblendet.
-- Mails: Einladung, Einladung angenommen, Passwort vergessen und Passwort geändert auf Deutsch, mit Memkontor statt
-  Docmost, samt Betreffzeilen (`branding/mails.sh`, Server-Kern).
+- Mails: Einladung, Einladung angenommen, Passwort vergessen, Passwort geändert sowie die Hinweise zu Kommentaren,
+  Erwähnungen, Seitenänderungen, Freigaben und die Übersicht auf Deutsch, mit Memkontor statt Docmost, samt
+  Betreffzeilen (`branding/mails.sh`, Server-Kern).
 - Ein Link "Quellcode (AGPL)" unten rechts führt hierher.
 
 Nicht geändert: Dateien aus den Enterprise-Verzeichnissen von Docmost (`apps/client/src/ee`, `apps/server/src/ee`,
